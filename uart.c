@@ -9,8 +9,7 @@
 #include "bsp.h"
 #include "uart.h"
 
-// Assumes an 80 MHz bus clock, creates 115200 baud rate
-void UART_Init(int baud) { 				// should be called only once
+void UART_Init() { 						// should be called only once
 	SYSCTL->RCGCUART |= (1<<1); 			// activate UART1
 	SYSCTL->RCGCGPIO |= (1<<1);			// activate port B
 
@@ -27,15 +26,11 @@ void UART_Init(int baud) { 				// should be called only once
 	GPIOB->DEN |= (1<<0)|(1<<1);			// enable digital I/O on PB1-0
 }
 
-// Wait for new input, then return ASCII code
 char UART_InChar(void) {
-	char data;
 	while ((UART1->FR & (1<<4)) != 0);	// wait until RXFE is 0
-	data = (UART1->DR & 0xFF);
-	return data;
+	return (char)(UART1->DR & 0xFF);
 }
 
-// Wait for buffer to be not full, then output
 void UART_OutChar(char data) {
 	while ((UART1->FR & (1<<5)) != 0); 	// wait until TXFF is 0
 	UART1->DR = data;

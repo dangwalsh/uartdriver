@@ -10,8 +10,13 @@
 #include "uart.h"
 
 int main() {
-	UART_Init(31250);
-	char c = UART_InChar();
+	UART_Init();
+	while(1) {
+		char c = UART_InChar();
+		if (c == 0xF8) {
+
+		}
+	}
 	return 0;
 }
 
