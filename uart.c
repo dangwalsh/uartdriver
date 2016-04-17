@@ -6,7 +6,6 @@
  */
 
 #include "TM4C123GH6PM.h"
-#include "bsp.h"
 #include "uart.h"
 
 void UART_Init() { 						// should be called only once
