@@ -1,14 +1,14 @@
 /*
- * uart.c
+ * midi.c
  *
  *  Created on: Apr 9, 2016
  *      Author: danielwalsh
  */
 
 #include "TM4C123GH6PM.h"
-#include "uart.h"
+#include "midi.h"
 
-void UART_Init() { 						// should be called only once
+void Midi_Init() { 						// should be called only once
 	SYSCTL->RCGCUART |= (1<<1); 			// activate UART1
 	SYSCTL->RCGCGPIO |= (1<<1);			// activate port B
 
@@ -25,12 +25,12 @@ void UART_Init() { 						// should be called only once
 	GPIOB->DEN |= (1<<0)|(1<<1);			// enable digital I/O on PB1-0
 }
 
-char UART_InChar(void) {
+char Midi_InChar(void) {
 	while ((UART1->FR & (1<<4)) != 0);	// wait until RXFE is 0
 	return (char)(UART1->DR & 0xFF);
 }
 
-void UART_OutChar(char data) {
+void Midi_OutChar(char data) {
 	while ((UART1->FR & (1<<5)) != 0); 	// wait until TXFF is 0
 	UART1->DR = data;
 }

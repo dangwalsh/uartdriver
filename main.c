@@ -7,33 +7,41 @@
 
 #include "TM4C123GH6PM.h"
 #include "bsp.h"
-#include "uart.h"
+#include "midi.h"
 #include "note.h"
 
+volatile static uint32_t adcResult;
 
+void ADC1Seq3_IRQHandler(void) {
+	adcResult = ADC1->SSFIFO3;
+	ADC1->ISC = (1 << 3);
+}
 
 int main() {
+	uint16_t duty = 0;
 	int i = 0;
-	int sequence[96] = { 0 };
+	int sequence[96] = {
 
-	sequence[0] = 1;
-	sequence[12] = 1;
+			1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0,
+			1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0,
+			1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0,
+			1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0
+	};
 
-	sequence[24] = 1;
-	sequence[36] = 1;
-
-	sequence[48] = 1;
-	sequence[60] = 1;
-
-	sequence[72] = 1;
-	sequence[84] = 1;
-
+	Timer_Init();
 	Note_Init();
-	UART_Init();
+	Midi_Init();
+	Pitch_Init();
+	PWM0_Init(18000, duty);
 
 	while(1) {
-		char c = UART_InChar();
+		char c = Midi_InChar();
 		if (c == 0xF8) {
+			PWM0->_0_CMPA = adcResult*4;
 			Note_Toggle(sequence[i]);
 			if (i >= 96)
 				i = 0;
