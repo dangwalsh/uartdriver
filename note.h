@@ -12,8 +12,6 @@
 
 void Timer_Init(void);
 void Note_Init(void);
-void Note_On(void);
-void Note_Off(void);
 void Note_Toggle(int);
 void Pitch_Init(void);
 void PWM0_Init(uint16_t period, uint16_t duty);
